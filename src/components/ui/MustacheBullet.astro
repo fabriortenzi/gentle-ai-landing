@@ -6,33 +6,21 @@ interface Props {
 const { class: className = '' } = Astro.props as Props;
 ---
 
-<svg
-  viewBox="0 0 240 96"
+<img
+  src="/bigote.png"
+  alt=""
   aria-hidden="true"
-  focusable="false"
   class={`mustache-bullet ${className}`}
-  width="16"
-  height="8"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <path
-    d="M120 56C106 56 94 60 81 68C66 78 48 80 34 70C22 61 20 44 29 33C38 22 55 24 66 34C74 41 76 50 71 59C66 69 56 74 46 74C56 86 74 91 93 86C108 82 117 70 120 56Z"
-    fill="currentColor"
-  />
-  <path
-    d="M120 56C134 56 146 60 159 68C174 78 192 80 206 70C218 61 220 44 211 33C202 22 185 24 174 34C166 41 164 50 169 59C174 69 184 74 194 74C184 86 166 91 147 86C132 82 123 70 120 56Z"
-    fill="currentColor"
-  />
-  <path d="M76 52C90 43 104 38 120 38C136 38 150 43 164 52C160 67 146 76 120 76C94 76 80 67 76 52Z" fill="currentColor" fill-opacity="0.9" />
-</svg>
+  loading="lazy"
+  decoding="async"
+/>
 
 <style>
   .mustache-bullet {
-    width: 1rem;
-    height: 0.5rem;
+    width: auto;
+    height: 0.6rem;
     flex-shrink: 0;
-    margin-top: 0.38rem;
-    opacity: 0.72;
+    opacity: 0.85;
+    object-fit: contain;
   }
 </style>

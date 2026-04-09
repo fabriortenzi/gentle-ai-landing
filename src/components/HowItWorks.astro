@@ -40,7 +40,7 @@ const steps: readonly Step[] = STEPS;
       {
         steps.map((step, index) => (
           <Card data-reveal-item style={`--item-index: ${index};`}>
-            <p class="font-heading text-5xl font-bold text-fucsia/30">{step.number}</p>
+            <p class="step-number font-heading text-5xl font-bold text-fucsia/60 md:text-6xl">{step.number}</p>
             <h3 class="mt-4 text-2xl font-bold text-text">{step.title}</h3>
             <p class="mt-3 text-text">{step.summary}</p>
             <p class="mt-2 text-text-muted">{step.detail}</p>
@@ -50,3 +50,9 @@ const steps: readonly Step[] = STEPS;
     </div>
   </div>
 </SectionWrapper>
+
+<style>
+  .step-number {
+    text-shadow: 0 0 20px rgb(234 24 137 / 0.3);
+  }
+</style>

@@ -54,9 +54,9 @@ const skillsFeatures: readonly SkillsFeature[] = HOW_IT_WORKS;
           {
             sddSkills.map((skill, index) => (
               <span
-                class="rounded-full border border-fucsia/20 bg-surface-2 px-3 py-1 font-mono text-sm text-fucsia"
+                class="skills-pill rounded-full border border-fucsia/20 bg-surface-2 px-3 py-1 font-mono text-sm text-fucsia"
                 data-reveal-item
-                style={`--item-index: ${index};`}
+                style={`--item-index: ${index}; --pill-float-delay: ${index * 0.24}s;`}
               >
                 {skill}
               </span>
@@ -66,9 +66,9 @@ const skillsFeatures: readonly SkillsFeature[] = HOW_IT_WORKS;
           {
             foundationSkills.map((skill, index) => (
               <span
-                class="rounded-full border border-border bg-surface-2 px-3 py-1 font-mono text-sm text-text-muted"
+                class="skills-pill rounded-full border border-border bg-surface-2 px-3 py-1 font-mono text-sm text-text-muted"
                 data-reveal-item
-                style={`--item-index: ${index + sddSkills.length};`}
+                style={`--item-index: ${index + sddSkills.length}; --pill-float-delay: ${(index + sddSkills.length) * 0.24}s;`}
               >
                 {skill}
               </span>
@@ -78,9 +78,9 @@ const skillsFeatures: readonly SkillsFeature[] = HOW_IT_WORKS;
           {
             specialSkills.map((skill, index) => (
               <span
-                class="rounded-full border border-border bg-surface-2 px-3 py-1 font-mono text-sm text-text-muted"
+                class="skills-pill rounded-full border border-border bg-surface-2 px-3 py-1 font-mono text-sm text-text-muted"
                 data-reveal-item
-                style={`--item-index: ${index + sddSkills.length + foundationSkills.length};`}
+                style={`--item-index: ${index + sddSkills.length + foundationSkills.length}; --pill-float-delay: ${(index + sddSkills.length + foundationSkills.length) * 0.24}s;`}
               >
                 {skill} <span class="text-text-dim">(parallel adversarial review)</span>
               </span>
@@ -115,3 +115,24 @@ const skillsFeatures: readonly SkillsFeature[] = HOW_IT_WORKS;
     </Card>
   </div>
 </SectionWrapper>
+
+<style>
+  [data-reveal-stagger] {
+    --stagger-step: 85ms;
+  }
+
+  [data-reveal-stagger].is-revealed .skills-pill {
+    animation:
+      var(--stagger-animation, fade-in-up) 0.62s ease-out both,
+      float 8s ease-in-out infinite;
+    animation-delay:
+      calc(var(--stagger-start, 0ms) + (var(--item-index, 0) * var(--stagger-step, 130ms))),
+      calc(0.72s + var(--stagger-start, 0ms) + (var(--item-index, 0) * var(--stagger-step, 130ms)) + var(--pill-float-delay, 0s));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal-stagger].is-revealed .skills-pill {
+      animation: none !important;
+    }
+  }
+</style>

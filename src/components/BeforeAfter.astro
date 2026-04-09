@@ -30,19 +30,19 @@ import SectionWrapper from './ui/SectionWrapper.astro';
           </div>
           <ul class="mustache-list space-y-3 text-text-muted">
             <li class="mustache-list__item">
-              <MustacheBullet class="text-fucsia" />
+              <span class="before-cross" aria-hidden="true">✕</span>
               <span class="mustache-list__text">Forgets everything between sessions</span>
             </li>
             <li class="mustache-list__item">
-              <MustacheBullet class="text-fucsia" />
+              <span class="before-cross" aria-hidden="true">✕</span>
               <span class="mustache-list__text">No workflow — just prompt and pray</span>
             </li>
             <li class="mustache-list__item">
-              <MustacheBullet class="text-fucsia" />
+              <span class="before-cross" aria-hidden="true">✕</span>
               <span class="mustache-list__text">Same model for every task</span>
             </li>
             <li class="mustache-list__item">
-              <MustacheBullet class="text-fucsia" />
+              <span class="before-cross" aria-hidden="true">✕</span>
               <span class="mustache-list__text">No skills, no standards, no guardrails</span>
             </li>
           </ul>
@@ -106,6 +106,16 @@ import SectionWrapper from './ui/SectionWrapper.astro';
   .before-after-grid {
     display: grid;
     gap: 1.5rem;
+  }
+
+  .before-cross {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    color: rgb(220 60 60 / 0.85);
+    text-shadow: 0 0 8px rgb(220 60 60 / 0.3);
   }
 
   .before-after-card {

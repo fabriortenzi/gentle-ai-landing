@@ -97,7 +97,7 @@ body {
 .mustache-list__item {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.65rem;
   padding-bottom: 0.8rem;
 }

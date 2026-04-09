@@ -76,7 +76,7 @@ const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
         }
       </div>
 
-      <div>
+      <div class="install-panels">
         {
           installMethods.map((method, index) => (
             <div
@@ -84,7 +84,7 @@ const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
               role="tabpanel"
               aria-labelledby={`tab-${method.id}`}
               hidden={index !== 0}
-              class="relative"
+              class:list={['install-panel relative', index === 0 && 'is-active']}
             >
               <Terminal title={method.title}>
                 <div class="mb-3 flex justify-end">
@@ -119,6 +119,14 @@ const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
   const tabPanels = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
 
   const activateTab = (nextTab: HTMLButtonElement): void => {
+    const nextPanelId = nextTab.getAttribute('aria-controls');
+    const currentPanel = tabPanels.find((p) => p.classList.contains('is-active'));
+    const nextPanel = tabPanels.find((p) => p.id === nextPanelId);
+
+    if (!nextPanel || currentPanel === nextPanel) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     tabButtons.forEach((tab) => {
       const isActive = tab === nextTab;
       tab.setAttribute('aria-selected', String(isActive));
@@ -129,10 +137,34 @@ const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
       tab.classList.toggle('border-transparent', !isActive);
     });
 
-    tabPanels.forEach((panel) => {
-      const isActive = panel.id === nextTab.getAttribute('aria-controls');
-      panel.hidden = !isActive;
-    });
+    if (prefersReduced || !currentPanel) {
+      tabPanels.forEach((panel) => {
+        const isActive = panel === nextPanel;
+        panel.hidden = !isActive;
+        panel.classList.toggle('is-active', isActive);
+      });
+      return;
+    }
+
+    currentPanel.classList.add('is-leaving');
+    currentPanel.classList.remove('is-active');
+
+    const onLeaveEnd = (): void => {
+      currentPanel.removeEventListener('animationend', onLeaveEnd);
+      currentPanel.classList.remove('is-leaving');
+      currentPanel.hidden = true;
+
+      nextPanel.hidden = false;
+      nextPanel.classList.add('is-entering');
+
+      const onEnterEnd = (): void => {
+        nextPanel.removeEventListener('animationend', onEnterEnd);
+        nextPanel.classList.remove('is-entering');
+        nextPanel.classList.add('is-active');
+      };
+      nextPanel.addEventListener('animationend', onEnterEnd, { once: true });
+    };
+    currentPanel.addEventListener('animationend', onLeaveEnd, { once: true });
   };
 
   tabButtons.forEach((tab, index) => {
@@ -184,3 +216,51 @@ const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
     });
   });
 </script>
+
+<style>
+  .install-panels {
+    position: relative;
+  }
+
+  .install-panel.is-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .install-panel.is-leaving {
+    animation: panel-out 150ms ease-in forwards;
+  }
+
+  .install-panel.is-entering {
+    animation: panel-in 200ms ease-out forwards;
+  }
+
+  @keyframes panel-out {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes panel-in {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .install-panel.is-leaving,
+    .install-panel.is-entering {
+      animation: none !important;
+    }
+  }
+</style>

@@ -3,15 +3,15 @@ import Card from './ui/Card.astro';
 import SectionWrapper from './ui/SectionWrapper.astro';
 
 const SDD_PHASES = [
-  'Init',
-  'Explore',
-  'Propose',
-  'Spec',
-  'Design',
-  'Tasks',
-  'Apply',
-  'Verify',
-  'Archive',
+  { name: 'Init', icon: '⚙️', hint: 'Detect stack' },
+  { name: 'Explore', icon: '🔍', hint: 'Investigate' },
+  { name: 'Propose', icon: '💡', hint: 'Define intent' },
+  { name: 'Spec', icon: '📋', hint: 'Requirements' },
+  { name: 'Design', icon: '🏗️', hint: 'Architecture' },
+  { name: 'Tasks', icon: '✂️', hint: 'Break down' },
+  { name: 'Apply', icon: '🚀', hint: 'Implement' },
+  { name: 'Verify', icon: '✅', hint: 'Validate' },
+  { name: 'Archive', icon: '📦', hint: 'Close & persist' },
 ] as const;
 
 type SddPhase = (typeof SDD_PHASES)[number];
@@ -41,10 +41,14 @@ const sddPhases: readonly SddPhase[] = SDD_PHASES;
       {
         sddPhases.map((phase, index) => (
           <li class="sdd-pipeline__item" data-active={index < 4 ? true : undefined} data-reveal-item style={`--item-index: ${index};`}>
+            <span class="sdd-pipeline__icon" aria-hidden="true">{phase.icon}</span>
             <span class="sdd-pipeline__node" aria-hidden="true"></span>
-            <span class="sdd-pipeline__label">
-              <span class="text-text-dim">{index + 1}.</span> {phase}
-            </span>
+            <div class="sdd-pipeline__text">
+              <span class="sdd-pipeline__label">
+                <span class="text-text-dim">{index + 1}.</span> {phase.name}
+              </span>
+              <span class="sdd-pipeline__hint">{phase.hint}</span>
+            </div>
           </li>
         ))
       }
@@ -104,6 +108,25 @@ const sddPhases: readonly SddPhase[] = SDD_PHASES;
     white-space: nowrap;
   }
 
+  .sdd-pipeline__icon {
+    font-size: 1.15rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .sdd-pipeline__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .sdd-pipeline__hint {
+    font-size: 0.62rem;
+    color: rgb(136 136 136 / 0.6);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
   .sdd-pipeline__item::after {
     content: '';
     position: absolute;
@@ -146,9 +169,13 @@ const sddPhases: readonly SddPhase[] = SDD_PHASES;
     .sdd-pipeline__item {
       flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       padding-right: 0;
       min-width: 5.75rem;
+    }
+
+    .sdd-pipeline__text {
+      align-items: center;
     }
 
     .sdd-pipeline__item::after,
