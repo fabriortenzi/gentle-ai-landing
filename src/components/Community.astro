@@ -1,0 +1,116 @@
+---
+import Button from './ui/Button.astro';
+import Card from './ui/Card.astro';
+import MustacheLogo from './ui/MustacheLogo.astro';
+import SectionWrapper from './ui/SectionWrapper.astro';
+
+const SOCIAL_LINKS = [
+  {
+    label: 'YouTube',
+    href: 'https://www.youtube.com/@GentlemanProgramming',
+  },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/Gentleman-Programming',
+  },
+  {
+    label: 'Twitch',
+    href: 'https://www.twitch.tv/gentlemanprogramming',
+  },
+  {
+    label: 'Discord',
+    href: 'https://discord.gg/53QtSvaMWM',
+  },
+] as const;
+
+type SocialLink = (typeof SOCIAL_LINKS)[number];
+
+const socialLinks: readonly SocialLink[] = SOCIAL_LINKS;
+const year = new Date().getFullYear();
+---
+
+<SectionWrapper id="community" class="pb-12" revealType="fade">
+  <div class="mx-auto max-w-5xl space-y-12">
+    <div class="space-y-4 text-center">
+      <h2 class="font-heading text-section font-bold text-text">Built by the community. Led by a Gentleman.</h2>
+    </div>
+
+    <Card
+      class="community-tribute-card mx-auto max-w-4xl space-y-6 rounded-2xl p-8 text-center"
+      style="--card-border-color: rgb(234 24 137 / 0.2); --card-hover-shadow: 0 8px 30px rgb(234 24 137 / 0.18), 0 0 52px rgb(234 24 137 / 0.14);"
+    >
+      <div class="flex justify-center">
+        <MustacheLogo size="md" glow class="text-fucsia" />
+      </div>
+
+      <p class="text-text-muted">
+        Alan Buscaglia, aka Gentleman Programming, created gentle-ai and Engram to prove that AI agents can be more
+        than chatbots. A consultant, educator, and GDE who believes in foundations over frameworks, concepts over
+        code, and building people up — even if it means being brutally honest.
+      </p>
+
+      <p class="text-fucsia italic">“You are Tony Stark. AI is Jarvis. You direct, it executes.”</p>
+
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+        {
+          socialLinks.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-text-muted transition-colors hover:text-fucsia focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </Card>
+
+    <div class="mx-auto max-w-3xl space-y-5 text-center">
+      <p class="text-lg text-text">This project exists because of the community.</p>
+      <a
+        href="https://github.com/Gentleman-Programming/gentle-ai/graphs/contributors"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex text-text-muted transition-colors hover:text-fucsia focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+      >
+        See all contributors on GitHub →
+      </a>
+
+      <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <Button variant="primary" href="https://github.com/Gentleman-Programming/gentle-ai">⭐ Star on GitHub</Button>
+        <Button variant="ghost" href="https://discord.gg/53QtSvaMWM">Join the Discord</Button>
+      </div>
+    </div>
+  </div>
+</SectionWrapper>
+
+<footer class="border-border border-t bg-surface px-6 py-8">
+  <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-sm text-text-muted md:flex-row">
+    <p>Made with 🤍 by the Gentleman Programming community</p>
+    <div class="flex items-center gap-3">
+      <span>MIT License</span>
+      <span aria-hidden="true">•</span>
+      <span>{year}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .community-tribute-card {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgb(234 24 137 / 0.08), 0 20px 40px rgb(234 24 137 / 0.08);
+  }
+
+  .community-tribute-card::before {
+    content: '';
+    position: absolute;
+    inset: -35% -10% auto;
+    height: 75%;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, rgb(234 24 137 / 0.2) 0%, rgb(234 24 137 / 0) 72%);
+    opacity: 0.9;
+  }
+</style>

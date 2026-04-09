@@ -1,0 +1,153 @@
+---
+import '../styles/global.css';
+
+const SEO_META = {
+  title: 'gentle-ai — One command. Any agent. Any OS.',
+  description:
+    'The Gentleman AI ecosystem configurator. Transform any AI coding agent into a memory-equipped, skill-aware, workflow-driven partner. 8 agents supported.',
+  canonical: 'https://gentle-ai.dev/',
+  ogImage: 'https://gentle-ai.dev/og.png',
+} as const;
+
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'gentle-ai',
+  description:
+    'The Gentleman AI ecosystem configurator — persistent memory, Spec-Driven Development, curated skills, and 8 supported agents.',
+  operatingSystem: 'macOS, Linux, Windows',
+  applicationCategory: 'DeveloperApplication',
+  license: 'https://opensource.org/licenses/MIT',
+  url: 'https://github.com/Gentleman-Programming/gentle-ai',
+  author: {
+    '@type': 'Person',
+    name: 'Alan Buscaglia',
+    url: 'https://github.com/Gentleman-Programming',
+  },
+} as const;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{SEO_META.title}</title>
+    <meta name="description" content={SEO_META.description} />
+    <link rel="canonical" href={SEO_META.canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={SEO_META.title} />
+    <meta
+      property="og:description"
+      content="The Gentleman AI ecosystem configurator. Transform any AI coding agent into a memory-equipped, skill-aware, workflow-driven partner."
+    />
+    <meta property="og:url" content={SEO_META.canonical} />
+    <meta property="og:image" content={SEO_META.ogImage} />
+    <meta property="og:site_name" content="gentle-ai" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={SEO_META.title} />
+    <meta name="twitter:description" content="The Gentleman AI ecosystem configurator." />
+    <meta name="twitter:image" content={SEO_META.ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(JSON_LD)}></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap"
+    />
+    <link rel="preload" href="/fonts/iosevka-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/iosevka-bold.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body class="bg-dark text-text font-heading">
+    <slot />
+
+    <script>
+      const revealElements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+      const staggerParents = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal-stagger]'));
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const revealNow = (element: HTMLElement): void => {
+        element.classList.add('reveal-visible');
+        element.classList.remove('reveal-prep');
+      };
+
+      const revealStaggerNow = (element: HTMLElement): void => {
+        element.classList.add('is-revealed');
+      };
+
+      if (prefersReducedMotion) {
+        revealElements.forEach(revealNow);
+        staggerParents.forEach(revealStaggerNow);
+      } else {
+        if (revealElements.length > 0) {
+          const revealObserver = new IntersectionObserver(
+            (entries, observer) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                  return;
+                }
+
+                const target = entry.target as HTMLElement;
+                revealNow(target);
+                observer.unobserve(target);
+              });
+            },
+            {
+              threshold: 0.1,
+              rootMargin: '0px 0px -10% 0px',
+            },
+          );
+
+          revealElements.forEach((element) => {
+            const rect = element.getBoundingClientRect();
+            const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+            if (isInViewport) {
+              revealNow(element);
+              return;
+            }
+
+            revealObserver.observe(element);
+          });
+        }
+
+        if (staggerParents.length > 0) {
+          const staggerObserver = new IntersectionObserver(
+            (entries, observer) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                  return;
+                }
+
+                const target = entry.target as HTMLElement;
+                revealStaggerNow(target);
+                observer.unobserve(target);
+              });
+            },
+            {
+              threshold: 0.15,
+              rootMargin: '0px 0px -8% 0px',
+            },
+          );
+
+          staggerParents.forEach((parent) => {
+            const rect = parent.getBoundingClientRect();
+            const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+            if (isInViewport) {
+              revealStaggerNow(parent);
+              return;
+            }
+
+            staggerObserver.observe(parent);
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

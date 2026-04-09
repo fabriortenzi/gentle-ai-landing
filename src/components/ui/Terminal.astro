@@ -1,0 +1,23 @@
+---
+interface Props {
+  title?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { title = 'terminal', class: className = '', ...rest } = Astro.props as Props;
+---
+
+<div {...rest} class={`rounded-lg border border-border overflow-hidden ${className}`}>
+  <div class="bg-surface-2 px-4 py-2.5 flex items-center gap-2">
+    <div class="flex gap-1.5">
+      <span class="h-3 w-3 rounded-full bg-terminal-red"></span>
+      <span class="h-3 w-3 rounded-full bg-terminal-yellow"></span>
+      <span class="h-3 w-3 rounded-full bg-terminal-green"></span>
+    </div>
+    <span class="text-text-dim text-sm font-mono ml-2">{title}</span>
+  </div>
+  <div class="bg-dark p-4 font-mono text-sm leading-relaxed">
+    <slot />
+  </div>
+</div>

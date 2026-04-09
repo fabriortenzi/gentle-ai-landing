@@ -1,0 +1,143 @@
+---
+import Button from './ui/Button.astro';
+import SectionWrapper from './ui/SectionWrapper.astro';
+import Terminal from './ui/Terminal.astro';
+---
+
+<SectionWrapper
+  id="hero"
+  reveal={false}
+  class="hero relative isolate overflow-hidden pt-32 md:pt-36 bg-surface"
+>
+  <div aria-hidden="true" class="hero__glow hero__glow--primary"></div>
+  <div aria-hidden="true" class="hero__glow hero__glow--accent"></div>
+  <div aria-hidden="true" class="hero__grid"></div>
+
+  <div class="relative mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
+    <span class="font-mono text-sm uppercase tracking-widest text-fucsia">AI Gentle Stack</span>
+
+    <h1 class="font-heading text-hero font-bold text-text">
+      One command. <span class="hero-signature">Any agent.</span> Any OS.
+    </h1>
+
+    <p class="mx-auto max-w-2xl text-xl text-text-muted">
+      The Gentleman AI ecosystem — configured and ready.
+    </p>
+
+    <div class="w-full max-w-3xl text-left">
+      <Terminal title="~">
+        <p>
+          <span class="text-fucsia">$</span>
+          <span id="hero-command" class="ml-2 break-all text-text"></span>
+          <span aria-hidden="true" class="ml-1 inline-block text-fucsia animate-pulse">|</span>
+        </p>
+      </Terminal>
+    </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <Button variant="primary" size="lg" href="#install">Get Started</Button>
+      <Button variant="ghost" size="lg" href="#features">See Features ↓</Button>
+    </div>
+  </div>
+</SectionWrapper>
+
+<style>
+  .hero-signature {
+    display: inline-block;
+    background-image: linear-gradient(110deg, rgb(234 24 137 / 1) 0%, rgb(255 66 166 / 1) 35%, rgb(255 170 209 / 0.95) 52%, rgb(207 128 255 / 0.9) 68%, rgb(234 24 137 / 1) 100%);
+    background-size: 220% 100%;
+    background-position: 0% center;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-signature {
+      animation: shimmer 4.8s ease-in-out infinite;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-signature {
+      animation: none !important;
+      background-position: 35% center;
+    }
+  }
+</style>
+
+<script>
+  const COMMANDS = [
+    'curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/gentle-ai/main/scripts/install.sh | bash',
+    'brew install gentle-ai',
+    'scoop install gentle-ai',
+    'go install github.com/gentleman-programming/gentle-ai/cmd/gentle-ai@latest',
+    'irm https://raw.githubusercontent.com/Gentleman-Programming/gentle-ai/main/scripts/install.ps1 | iex',
+  ] as const;
+
+  type TypePhase = 'typing' | 'paused' | 'erasing' | 'between';
+
+  const commandElement = document.querySelector<HTMLElement>('#hero-command');
+
+  if (commandElement) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      commandElement.textContent = COMMANDS[0];
+    } else {
+      const TYPE_SPEED_MS = 50;
+      const ERASE_SPEED_MS = 30;
+      const PAUSE_COMPLETE_MS = 2500;
+      const PAUSE_BETWEEN_MS = 500;
+
+      let commandIndex = 0;
+      let charIndex = 0;
+      let phase: TypePhase = 'typing';
+
+      const tick = (): void => {
+        const currentCommand = COMMANDS[commandIndex];
+
+        if (phase === 'typing') {
+          charIndex += 1;
+          commandElement.textContent = currentCommand.slice(0, charIndex);
+
+          if (charIndex >= currentCommand.length) {
+            phase = 'paused';
+            window.setTimeout(tick, PAUSE_COMPLETE_MS);
+            return;
+          }
+
+          window.setTimeout(tick, TYPE_SPEED_MS);
+          return;
+        }
+
+        if (phase === 'paused') {
+          phase = 'erasing';
+          window.setTimeout(tick, ERASE_SPEED_MS);
+          return;
+        }
+
+        if (phase === 'erasing') {
+          charIndex -= 1;
+          commandElement.textContent = currentCommand.slice(0, Math.max(charIndex, 0));
+
+          if (charIndex <= 0) {
+            phase = 'between';
+            commandIndex = (commandIndex + 1) % COMMANDS.length;
+            window.setTimeout(tick, PAUSE_BETWEEN_MS);
+            return;
+          }
+
+          window.setTimeout(tick, ERASE_SPEED_MS);
+          return;
+        }
+
+        phase = 'typing';
+        window.setTimeout(tick, TYPE_SPEED_MS);
+      };
+
+      tick();
+    }
+  }
+</script>

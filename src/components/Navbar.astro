@@ -1,0 +1,177 @@
+---
+import Button from './ui/Button.astro';
+import MustacheLogo from './ui/MustacheLogo.astro';
+
+const NAV_LINKS = [
+  { label: 'Features', href: '#features' },
+  { label: 'Agents', href: '#agents' },
+  { label: 'Memory', href: '#memory' },
+  { label: 'SDD', href: '#sdd' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Install', href: '#install' },
+] as const;
+
+type NavLink = (typeof NAV_LINKS)[number];
+
+const links: readonly NavLink[] = NAV_LINKS;
+---
+
+<nav
+  data-navbar
+  class="fixed top-0 left-0 right-0 z-50 border-b border-transparent bg-transparent transition-all duration-300"
+>
+  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+    <a
+      href="#hero"
+      class="inline-flex items-center gap-2 text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+      aria-label="Go to hero section"
+    >
+      <MustacheLogo size="sm" class="text-fucsia" />
+      <span class="font-heading text-lg font-bold">gentle-ai</span>
+    </a>
+
+    <ul class="hidden items-center gap-6 md:flex">
+      {
+        links.map((link) => (
+          <li>
+            <a
+                href={link.href}
+                data-nav-link
+                class="text-sm font-medium text-text-muted transition-colors duration-300 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+              >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="hidden md:block">
+      <Button variant="primary" size="default" href="#install">Install Now</Button>
+    </div>
+
+    <button
+      type="button"
+      data-mobile-toggle
+      class="inline-flex items-center justify-center rounded-lg border border-border p-2 text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark md:hidden"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="mobile-nav-menu"
+    >
+      <span class="sr-only">Menu</span>
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="mobile-nav-menu" data-mobile-menu class="hidden border-t border-border bg-dark/95 px-6 py-4 md:hidden">
+    <ul class="flex flex-col gap-3">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              data-nav-link
+              class="block text-sm font-medium text-text-muted transition-colors duration-300 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-2">
+        <Button variant="primary" size="default" href="#install">Install Now</Button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const navbar = document.querySelector<HTMLElement>('[data-navbar]');
+  const toggleButton = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+  const mobileMenu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+  const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+
+  let navTicking = false;
+
+  const applyNavbarState = (): void => {
+    if (!navbar) {
+      return;
+    }
+
+    const isScrolled = window.scrollY > 50;
+    navbar.classList.toggle('bg-dark/95', isScrolled);
+    navbar.classList.toggle('backdrop-blur-md', isScrolled);
+    navbar.classList.toggle('shadow-lg', isScrolled);
+    navbar.classList.toggle('border-border', isScrolled);
+    navbar.classList.toggle('border-transparent', !isScrolled);
+  };
+
+  const onScroll = (): void => {
+    if (navTicking) {
+      return;
+    }
+
+    navTicking = true;
+    window.requestAnimationFrame(() => {
+      applyNavbarState();
+      navTicking = false;
+    });
+  };
+
+  applyNavbarState();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  if (toggleButton && mobileMenu) {
+    toggleButton.addEventListener('click', () => {
+      const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+      const nextState = !isExpanded;
+      toggleButton.setAttribute('aria-expanded', String(nextState));
+      mobileMenu.classList.toggle('hidden', !nextState);
+    });
+  }
+
+  navLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      if (!toggleButton || !mobileMenu) {
+        return;
+      }
+
+      toggleButton.setAttribute('aria-expanded', 'false');
+      mobileMenu.classList.add('hidden');
+    });
+  });
+
+  const sectionIds = Array.from(new Set(navLinks.map((link) => link.getAttribute('href')?.replace('#', '')).filter(Boolean)));
+  const sections = sectionIds
+    .map((id) => document.getElementById(id as string))
+    .filter((section): section is HTMLElement => section instanceof HTMLElement);
+
+  const setActiveLinks = (activeId: string): void => {
+    navLinks.forEach((link) => {
+      const matches = link.getAttribute('href') === `#${activeId}`;
+      link.classList.toggle('text-fucsia', matches);
+      link.classList.toggle('text-text-muted', !matches);
+    });
+  };
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || !entry.target.id) {
+            return;
+          }
+
+          setActiveLinks(entry.target.id);
+        });
+      },
+      {
+        threshold: 0.3,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>

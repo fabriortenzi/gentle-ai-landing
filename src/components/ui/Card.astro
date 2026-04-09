@@ -1,0 +1,54 @@
+---
+interface Props {
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { class: className = '', ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  class={`card-shell rounded-xl p-6 ${className}`}
+>
+  <slot />
+</div>
+
+<style>
+  .card-shell {
+    --card-bg:
+      linear-gradient(155deg, rgb(234 24 137 / 0.03) 0%, rgb(10 10 10 / 1) 72%),
+      rgb(18 18 18 / 1);
+    --card-border-color: rgb(234 24 137 / 0.15);
+    --card-hover-border-color: rgb(234 24 137 / 0.4);
+    --card-hover-shadow: 0 4px 20px rgb(234 24 137 / 0.15), 0 0 40px rgb(234 24 137 / 0.08);
+    background:
+      var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    transition: transform 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+  }
+
+  .card-shell:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-hover-border-color);
+    box-shadow: var(--card-hover-shadow);
+  }
+
+  .card-shell:focus-within {
+    animation: border-glow 2.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-shell {
+      transition: border-color 300ms ease, box-shadow 300ms ease;
+    }
+
+    .card-shell:hover {
+      transform: none;
+    }
+
+    .card-shell:focus-within {
+      animation: none !important;
+    }
+  }
+</style>

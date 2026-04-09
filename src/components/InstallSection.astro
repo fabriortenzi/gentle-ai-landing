@@ -1,0 +1,186 @@
+---
+import SectionWrapper from './ui/SectionWrapper.astro';
+import Terminal from './ui/Terminal.astro';
+
+const INSTALL_METHODS = [
+  {
+    id: 'unix',
+    label: 'macOS / Linux',
+    title: 'bash',
+    command:
+      'curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/gentle-ai/main/scripts/install.sh | bash',
+  },
+  {
+    id: 'brew',
+    label: 'Homebrew',
+    title: 'brew',
+    command: 'brew tap Gentleman-Programming/homebrew-tap && brew install gentle-ai',
+  },
+  {
+    id: 'scoop',
+    label: 'Windows (Scoop)',
+    title: 'scoop',
+    command:
+      'scoop bucket add gentleman https://github.com/Gentleman-Programming/scoop-bucket && scoop install gentle-ai',
+  },
+  {
+    id: 'go',
+    label: 'Go',
+    title: 'go',
+    command: 'go install github.com/gentleman-programming/gentle-ai/cmd/gentle-ai@latest',
+  },
+  {
+    id: 'powershell',
+    label: 'PowerShell',
+    title: 'powershell',
+    command: 'irm https://raw.githubusercontent.com/Gentleman-Programming/gentle-ai/main/scripts/install.ps1 | iex',
+  },
+] as const;
+
+type InstallMethod = (typeof INSTALL_METHODS)[number];
+
+const installMethods: readonly InstallMethod[] = INSTALL_METHODS;
+---
+
+<SectionWrapper id="install" revealType="scale">
+  <div class="mx-auto max-w-5xl space-y-8">
+    <div class="space-y-3 text-center">
+      <h2 class="font-heading text-section font-bold text-text">Get started in seconds.</h2>
+      <p class="text-text-muted">Pick your platform. One command.</p>
+    </div>
+
+    <div class="space-y-6">
+      <div
+        role="tablist"
+        aria-label="Install methods"
+        class="flex gap-1 overflow-x-auto border-b border-border"
+      >
+        {
+          installMethods.map((method, index) => (
+            <button
+              id={`tab-${method.id}`}
+              type="button"
+              role="tab"
+              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-controls={`panel-${method.id}`}
+              tabindex={index === 0 ? 0 : -1}
+                class={`shrink-0 border-b-2 px-4 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
+                  index === 0
+                    ? 'text-fucsia border-fucsia'
+                    : 'text-text-muted border-transparent hover:text-text'
+              }`}
+            >
+              {method.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div>
+        {
+          installMethods.map((method, index) => (
+            <div
+              id={`panel-${method.id}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${method.id}`}
+              hidden={index !== 0}
+              class="relative"
+            >
+              <Terminal title={method.title}>
+                <div class="mb-3 flex justify-end">
+                  <button
+                    type="button"
+                    data-copy-button
+                    class="rounded-md border border-border px-3 py-1 text-xs font-medium text-text-muted transition-colors hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <p>
+                  <span class="text-fucsia">$</span>
+                  <code class="ml-2 text-text break-all" data-command>{method.command}</code>
+                </p>
+              </Terminal>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <p class="text-center text-sm text-text-dim">
+      After install, open your AI agent and run <span class="font-mono text-text">/sdd-init</span> +
+      <span class="font-mono text-text">skill-registry</span> for project-level setup.
+    </p>
+  </div>
+</SectionWrapper>
+
+<script>
+  const tabButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const tabPanels = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+  const activateTab = (nextTab: HTMLButtonElement): void => {
+    tabButtons.forEach((tab) => {
+      const isActive = tab === nextTab;
+      tab.setAttribute('aria-selected', String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
+      tab.classList.toggle('text-fucsia', isActive);
+      tab.classList.toggle('border-fucsia', isActive);
+      tab.classList.toggle('text-text-muted', !isActive);
+      tab.classList.toggle('border-transparent', !isActive);
+    });
+
+    tabPanels.forEach((panel) => {
+      const isActive = panel.id === nextTab.getAttribute('aria-controls');
+      panel.hidden = !isActive;
+    });
+  };
+
+  tabButtons.forEach((tab, index) => {
+    tab.addEventListener('click', () => activateTab(tab));
+
+    tab.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activateTab(tab);
+        return;
+      }
+
+      event.preventDefault();
+      const direction = event.key === 'ArrowRight' ? 1 : -1;
+      const nextIndex = (index + direction + tabButtons.length) % tabButtons.length;
+      const nextTab = tabButtons[nextIndex];
+      nextTab.focus();
+    });
+  });
+
+  const copyButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy-button]'));
+
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const panel = button.closest('[role="tabpanel"]');
+      const commandElement = panel?.querySelector<HTMLElement>('[data-command]');
+      const command = commandElement?.textContent?.trim();
+
+      if (!command) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(command);
+        const originalLabel = button.textContent ?? 'Copy';
+        button.textContent = 'Copied!';
+        button.classList.add('text-fucsia');
+        window.setTimeout(() => {
+          button.textContent = originalLabel;
+          button.classList.remove('text-fucsia');
+        }, 2000);
+      } catch {
+        button.textContent = 'Failed';
+      }
+    });
+  });
+</script>

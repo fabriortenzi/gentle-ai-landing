@@ -1,0 +1,22 @@
+---
+const BADGE_VARIANTS = {
+  full: 'bg-fucsia/20 text-fucsia border border-fucsia/30',
+  solo: 'bg-surface-2 text-text-muted border border-border',
+  'solo-mc': 'bg-surface-2 text-fucsia-dim border border-fucsia-dim/30',
+} as const;
+
+type BadgeVariant = keyof typeof BADGE_VARIANTS;
+type BadgeVariantClass = (typeof BADGE_VARIANTS)[keyof typeof BADGE_VARIANTS];
+
+interface Props {
+  variant: BadgeVariant;
+  label: string;
+}
+
+const { variant, label } = Astro.props as Props;
+const variantClasses: BadgeVariantClass = BADGE_VARIANTS[variant];
+---
+
+<span
+  class={`text-xs px-2.5 py-1 rounded-full font-mono uppercase tracking-wider inline-flex ${variantClasses}`}
+>{label}</span>

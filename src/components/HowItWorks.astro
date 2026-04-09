@@ -1,0 +1,52 @@
+---
+import Card from './ui/Card.astro';
+import SectionWrapper from './ui/SectionWrapper.astro';
+
+const STEPS = [
+  {
+    number: '01',
+    title: 'Install',
+    summary: 'One command. Pick your agents. Done.',
+    detail: 'curl, brew, scoop, or go install — works everywhere.',
+  },
+  {
+    number: '02',
+    title: 'Configure',
+    summary: 'Choose your stack. Or let us choose for you.',
+    detail: 'Full Gentleman, Ecosystem Only, Minimal, or Custom presets.',
+  },
+  {
+    number: '03',
+    title: 'Work',
+    summary: 'Just start coding. Everything activates automatically.',
+    detail: 'Memory, skills, and workflow — zero configuration needed.',
+  },
+] as const;
+
+type Step = (typeof STEPS)[number];
+
+const steps: readonly Step[] = STEPS;
+---
+
+<SectionWrapper id="how-it-works" revealType="fade-up">
+  <div class="mx-auto max-w-6xl space-y-12">
+    <h2 class="text-center font-heading text-section font-bold text-text">Three steps. That's it.</h2>
+
+    <div
+      class="grid gap-6 md:grid-cols-3"
+      data-reveal-stagger
+      style="--stagger-animation: fade-in-up; --stagger-step: 150ms;"
+    >
+      {
+        steps.map((step, index) => (
+          <Card data-reveal-item style={`--item-index: ${index};`}>
+            <p class="font-heading text-5xl font-bold text-fucsia/30">{step.number}</p>
+            <h3 class="mt-4 text-2xl font-bold text-text">{step.title}</h3>
+            <p class="mt-3 text-text">{step.summary}</p>
+            <p class="mt-2 text-text-muted">{step.detail}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+</SectionWrapper>

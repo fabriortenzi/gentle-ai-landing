@@ -1,0 +1,24 @@
+---
+interface Props {
+  id?: string;
+  class?: string;
+  reveal?: boolean;
+  revealType?: 'fade-up' | 'fade' | 'slide-left' | 'slide-right' | 'scale';
+}
+
+const { id, class: className = '', reveal = true, revealType = 'fade-up' } = Astro.props as Props;
+const revealClasses = reveal
+  ? 'reveal-prep motion-reduce:opacity-100 motion-reduce:translate-y-0'
+  : 'opacity-100 translate-y-0';
+---
+
+<section
+  id={id}
+  data-reveal={reveal ? true : undefined}
+  data-reveal-type={reveal ? revealType : undefined}
+  class={`py-24 md:py-32 ${revealClasses} ${className}`}
+>
+  <div class="max-w-7xl mx-auto px-6">
+    <slot />
+  </div>
+</section>

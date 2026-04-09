@@ -1,0 +1,267 @@
+---
+import Card from './ui/Card.astro';
+import MustacheBullet from './ui/MustacheBullet.astro';
+import SectionWrapper from './ui/SectionWrapper.astro';
+---
+
+<SectionWrapper id="features">
+  <div class="mx-auto max-w-5xl space-y-12">
+    <div class="space-y-4 text-center">
+      <h2 class="font-heading text-section font-bold text-text">Not an installer. An ecosystem configurator.</h2>
+      <p class="text-text-muted">
+        Most agents are easy to install. The hard part is making them actually useful.
+      </p>
+    </div>
+
+    <div class="before-after-grid">
+      <div
+        class="before-after-panel before-after-panel--before reveal-prep space-y-4"
+        data-reveal
+        data-reveal-type="slide-left"
+      >
+        <p class="font-mono text-sm uppercase tracking-wider text-text-dim">BEFORE</p>
+        <Card class="before-after-card before-after-card--before">
+          <p class="mb-5 text-lg text-text">“I installed Claude Code / OpenCode / Cursor, but it's just a chatbot that writes code.”</p>
+          <div class="before-after-terminal before-after-terminal--before">
+            <p><span class="text-text-dim">$</span> prompt it, hope it works...</p>
+            <p class="pl-2">TODO?? maybe auth?? try again</p>
+            <p class="pl-1">random patch without spec</p>
+            <p class="pl-3">bug came back on deploy</p>
+          </div>
+          <ul class="mustache-list space-y-3 text-text-muted">
+            <li class="mustache-list__item">
+              <MustacheBullet class="text-fucsia" />
+              <span class="mustache-list__text">Forgets everything between sessions</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet class="text-fucsia" />
+              <span class="mustache-list__text">No workflow — just prompt and pray</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet class="text-fucsia" />
+              <span class="mustache-list__text">Same model for every task</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet class="text-fucsia" />
+              <span class="mustache-list__text">No skills, no standards, no guardrails</span>
+            </li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="before-after-divider" aria-hidden="true">
+        <span class="before-after-divider__line"></span>
+        <span class="before-after-divider__badge">VS</span>
+      </div>
+
+      <div
+        class="before-after-panel before-after-panel--after reveal-prep space-y-4"
+        data-reveal
+        data-reveal-type="slide-right"
+      >
+        <p class="font-mono text-sm uppercase tracking-wider text-fucsia">AFTER</p>
+        <Card class="before-after-card before-after-card--after" data-after-card>
+          <p class="mb-5 text-lg text-text">
+            “Your agent now has memory, skills, workflow, MCP tools, and a persona that actually teaches you.”
+          </p>
+          <div class="before-after-terminal before-after-terminal--after">
+            <p><span class="text-fucsia">$</span> /sdd-new auth-hardening</p>
+            <p class="pl-2 text-text-muted">✓ spec + design + tasks generated</p>
+            <p class="pl-2 text-text-muted">✓ apply phase with guardrails</p>
+            <p class="pl-2 text-text-muted">✓ verify green, memory persisted</p>
+          </div>
+          <ul class="mustache-list space-y-3 text-fucsia">
+            <li class="mustache-list__item">
+              <MustacheBullet />
+              <span class="mustache-list__text">Persistent memory across sessions</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet />
+              <span class="mustache-list__text">Spec-Driven Development workflow</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet />
+              <span class="mustache-list__text">Per-phase model routing</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet />
+              <span class="mustache-list__text">Auto-detected coding skills</span>
+            </li>
+            <li class="mustache-list__item">
+              <MustacheBullet />
+              <span class="mustache-list__text">Teaching-oriented persona</span>
+            </li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+
+    <p class="text-center text-lg italic text-text-muted">
+      “The less you think about gentle-ai after installing, the better it's working.”
+    </p>
+  </div>
+</SectionWrapper>
+
+<style>
+  .before-after-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .before-after-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .before-after-card--before {
+    border-color: rgb(136 110 98 / 0.45);
+    background: linear-gradient(155deg, rgb(52 37 34 / 0.82) 0%, rgb(17 17 17 / 1) 72%);
+  }
+
+  .before-after-card--before::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.2) 1px, transparent 0);
+    background-size: 3px 3px;
+    mix-blend-mode: soft-light;
+  }
+
+  .before-after-card--after {
+    border-color: rgb(234 24 137 / 0.3);
+    box-shadow: 0 0 0 1px rgb(234 24 137 / 0.16), 0 10px 34px rgb(234 24 137 / 0.1);
+  }
+
+  .before-after-card--after::before {
+    content: '';
+    position: absolute;
+    inset: -28% -20% auto;
+    height: 12rem;
+    border-radius: 9999px;
+    background: radial-gradient(circle at center, rgb(234 24 137 / 0.22) 0%, rgb(234 24 137 / 0) 72%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .before-after-card--after > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .before-after-terminal {
+    margin-bottom: 1.3rem;
+    border-radius: 0.65rem;
+    border: 1px solid rgb(255 255 255 / 0.07);
+    background-color: rgb(10 10 10 / 0.88);
+    padding: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .before-after-terminal--before {
+    border-color: rgb(155 118 108 / 0.35);
+    color: rgb(141 141 141 / 1);
+  }
+
+  .before-after-terminal--after {
+    border-color: rgb(234 24 137 / 0.25);
+    color: rgb(255 255 255 / 1);
+  }
+
+  .before-after-divider {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 1.25rem;
+  }
+
+  .before-after-divider__line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, rgb(136 110 98 / 0.55) 0%, rgb(234 24 137 / 0.75) 100%);
+  }
+
+  .before-after-divider__badge {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(234 24 137 / 0.35);
+    background-color: rgb(17 17 17 / 1);
+    color: rgb(234 24 137 / 1);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+  }
+
+  @media (min-width: 1024px) {
+    .before-after-grid {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: stretch;
+      gap: 1.1rem;
+    }
+
+    .before-after-divider {
+      min-height: auto;
+      width: 2.2rem;
+    }
+
+    .before-after-divider__line {
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(180deg, rgb(136 110 98 / 0.55) 0%, rgb(234 24 137 / 0.75) 100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .before-after-card--after {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    .before-after-card--after.is-visible {
+      animation: scale-in 0.75s ease-out forwards;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .before-after-card--after {
+      opacity: 1;
+      transform: none;
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  const afterCard = document.querySelector<HTMLElement>('[data-after-card]');
+
+  if (afterCard) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      afterCard.classList.add('is-visible');
+    } else {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              afterCard.classList.add('is-visible');
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.35 }
+      );
+
+      observer.observe(afterCard);
+    }
+  }
+</script>

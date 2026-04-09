@@ -1,0 +1,48 @@
+---
+const BUTTON_VARIANTS = {
+  primary:
+    'bg-fucsia text-white shadow-[var(--shadow-primary-glow)] hover:bg-fucsia-dim hover:shadow-[var(--shadow-primary-glow-hover)] hover:scale-[1.02] motion-reduce:hover:scale-100 transition-[background-color,box-shadow,transform] duration-300',
+  ghost: 'border border-border text-text-muted hover:bg-surface hover:text-text transition-all duration-300',
+} as const;
+
+const BUTTON_SIZES = {
+  default: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg',
+} as const;
+
+type ButtonVariantKey = keyof typeof BUTTON_VARIANTS;
+type ButtonVariantClass = (typeof BUTTON_VARIANTS)[keyof typeof BUTTON_VARIANTS];
+type ButtonSize = keyof typeof BUTTON_SIZES;
+
+interface Props {
+  variant?: ButtonVariantKey;
+  href?: string;
+  size?: ButtonSize;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+const {
+  variant: variantKey = 'primary',
+  href,
+  size = 'default',
+  type = 'button',
+} = Astro.props as Props;
+
+const isExternalLink = typeof href === 'string' && /^(https?:)?\/\//.test(href);
+
+const variantClasses: ButtonVariantClass = BUTTON_VARIANTS[variantKey];
+const sizeClasses = BUTTON_SIZES[size];
+const baseClasses = `inline-flex items-center justify-center rounded-lg font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fucsia focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${sizeClasses} ${variantClasses}`;
+---
+
+{
+  href ? (
+    <a href={href} target={isExternalLink ? '_blank' : undefined} rel={isExternalLink ? 'noopener noreferrer' : undefined} class={baseClasses}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={baseClasses}>
+      <slot />
+    </button>
+  )
+}

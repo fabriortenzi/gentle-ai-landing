@@ -1,0 +1,59 @@
+---
+import Badge from './ui/Badge.astro';
+import Card from './ui/Card.astro';
+import SectionWrapper from './ui/SectionWrapper.astro';
+
+const AGENTS = [
+  { name: 'Claude Code', delegation: 'full' as const, feature: 'Sub-agents, output styles' },
+  { name: 'OpenCode', delegation: 'full' as const, feature: 'Per-phase model routing' },
+  { name: 'Gemini CLI', delegation: 'full' as const, feature: 'Custom agents in ~/.gemini/agents/' },
+  { name: 'Cursor', delegation: 'full' as const, feature: '9 SDD agents in ~/.cursor/agents/' },
+  { name: 'VS Code Copilot', delegation: 'full' as const, feature: 'Parallel execution' },
+  { name: 'Codex', delegation: 'solo' as const, feature: 'CLI-native, TOML config' },
+  { name: 'Windsurf', delegation: 'solo' as const, feature: 'Plan Mode, Code Mode, native workflows' },
+  { name: 'Antigravity', delegation: 'solo-mc' as const, feature: 'Built-in Browser/Terminal sub-agents' },
+] as const;
+
+const DELEGATION_LABELS = {
+  full: 'Full',
+  solo: 'Solo',
+  'solo-mc': 'Solo + MC',
+} as const;
+
+type Agent = (typeof AGENTS)[number];
+
+const agents: readonly Agent[] = AGENTS;
+---
+
+<SectionWrapper id="agents" revealType="scale">
+  <div class="mx-auto max-w-6xl space-y-12">
+    <div class="space-y-3 text-center">
+      <h2 class="font-heading text-section font-bold text-text">Your agent. Supercharged.</h2>
+      <p class="text-text-muted">8 agents supported. Full delegation or solo — your choice.</p>
+    </div>
+
+    <div
+      class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+      data-reveal-stagger
+      style="--stagger-animation: fade-in-up; --stagger-step: 95ms; --stagger-start: 100ms;"
+    >
+      {
+        agents.map((agent, index) => (
+          <Card
+            data-reveal-item
+            style={`--item-index: ${index};`}
+            class="space-y-4"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="text-lg font-bold text-text">{agent.name}</h3>
+              <Badge variant={agent.delegation} label={DELEGATION_LABELS[agent.delegation]} />
+            </div>
+            <p class="text-sm text-text-muted">{agent.feature}</p>
+          </Card>
+        ))
+      }
+    </div>
+
+    <p class="text-center text-sm text-text-dim">Supersedes Agent Teams Lite — now archived.</p>
+  </div>
+</SectionWrapper>

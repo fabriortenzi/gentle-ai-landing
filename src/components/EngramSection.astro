@@ -1,0 +1,153 @@
+---
+import SectionWrapper from './ui/SectionWrapper.astro';
+import Terminal from './ui/Terminal.astro';
+import MustacheBullet from './ui/MustacheBullet.astro';
+
+const ENGRAM_FEATURES = [
+  'Cross-session memory — decisions, bug fixes, context saved automatically',
+  'Full-text search (FTS5) — find anything from past sessions',
+  'Git sync — export to .engram/ for team sharing',
+  'TUI browser — visual memory exploration',
+  'Auto-detection — project name from git remote',
+] as const;
+
+const TERMINAL_LINES = [
+  { tone: 'command', text: '$ engram search "auth middleware"' },
+  { tone: 'plain', text: 'Found 3 memories:' },
+  { tone: 'fucsia', text: '#42', extra: ' [bugfix] Fixed JWT refresh token rotation' },
+  { tone: 'muted', text: '  What: Added token rotation on refresh endpoint' },
+  { tone: 'muted', text: '  Where: src/middleware/auth.ts' },
+  { tone: 'dim', text: '  2024-03-15 | project: my-api' },
+  { tone: 'fucsia', text: '#38', extra: ' [decision] Switched from sessions to JWT' },
+  { tone: 'muted', text: '  What: Replaced express-session with jsonwebtoken' },
+  { tone: 'muted', text: '  Where: src/middleware/auth.ts, src/routes/login.ts' },
+  { tone: 'dim', text: '  2024-03-12 | project: my-api' },
+] as const;
+
+type EngramFeature = (typeof ENGRAM_FEATURES)[number];
+
+const engramFeatures: readonly EngramFeature[] = ENGRAM_FEATURES;
+---
+
+<SectionWrapper id="memory" revealType="slide-left">
+  <div class="mx-auto max-w-6xl space-y-12">
+    <div class="space-y-3 text-center">
+      <h2 class="font-heading text-section font-bold text-text">Never forgets. Ever.</h2>
+      <p class="text-text-muted">Persistent memory across sessions. Automatic. Zero config.</p>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-2 lg:items-start">
+      <ul class="mustache-list space-y-4">
+        {
+          engramFeatures.map((feature) => (
+            <li class="mustache-list__item text-text-muted">
+              <MustacheBullet class="text-fucsia" />
+              <span class="mustache-list__text">{feature}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <Terminal title="engram" data-reveal data-reveal-type="slide-right" class="reveal-prep">
+        <div class="engram-terminal" data-engram-terminal style={`--line-count: ${TERMINAL_LINES.length};`}>
+          {
+            TERMINAL_LINES.map((line, index) => (
+              <p
+                data-engram-line
+                style={`--line-index: ${index};`}
+                class:list={{
+                  'engram-terminal__line': true,
+                  'text-text': line.tone === 'plain',
+                  'text-text-muted': line.tone === 'muted',
+                  'text-text-dim': line.tone === 'dim',
+                  'text-fucsia': line.tone === 'fucsia',
+                }}
+              >
+                {line.tone === 'command' ? (
+                  <>
+                    <span class="text-fucsia">$</span>
+                    <span class="ml-2 text-text">engram search "auth middleware"</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{line.text}</span>
+                    {line.extra && <span class="text-fucsia-dim">{line.extra}</span>}
+                  </>
+                )}
+              </p>
+            ))
+          }
+          <span class="engram-terminal__cursor text-fucsia" aria-hidden="true">▊</span>
+        </div>
+      </Terminal>
+    </div>
+
+    <p class="text-center italic text-text-muted">
+      Day-to-day: you don't need to do anything. The agent handles memory automatically.
+    </p>
+  </div>
+</SectionWrapper>
+
+<style>
+  .engram-terminal {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .engram-terminal__line {
+    opacity: 1;
+  }
+
+  .engram-terminal__cursor {
+    margin-left: 0.15rem;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .engram-terminal__line {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .engram-terminal.is-revealed .engram-terminal__line {
+      animation: fade-in-up 0.55s ease-out both;
+      animation-delay: calc(var(--line-index) * 240ms);
+    }
+
+    .engram-terminal__cursor {
+      opacity: 0;
+    }
+
+    .engram-terminal.is-revealed .engram-terminal__cursor {
+      animation:
+        fade-in 0.2s ease-out calc(var(--line-count) * 240ms + 220ms) forwards,
+        typewriter-blink 0.95s step-end calc(var(--line-count) * 240ms + 420ms) infinite;
+    }
+  }
+</style>
+
+<script>
+  const terminal = document.querySelector<HTMLElement>('[data-engram-terminal]');
+
+  if (terminal) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              terminal.classList.add('is-revealed');
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.35 }
+      );
+
+      observer.observe(terminal);
+    } else {
+      terminal.classList.add('is-revealed');
+    }
+  }
+</script>
